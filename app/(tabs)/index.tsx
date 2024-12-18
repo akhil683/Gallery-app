@@ -8,13 +8,11 @@ export default function Home() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Photos' }} />
-      <Link href={"/asset"}>Go to asset Page</Link>
       <FlatList
         data={assets}
         numColumns={4}
         columnWrapperStyle={{ gap: 2 }}
-        contentContainerStyle={{ gap: 2 }}
+        contentContainerStyle={{ gap: 2, backgroundColor: 'black' }}
         onEndReached={loadLocalAssets} //Pagination: Load more when image list ended
         onEndReachedThreshold={2} // unit in visible height. e.g -> load more when when we have 2 more visible height images.
         // refreshing={loading}

@@ -12,8 +12,24 @@ export default function RootLayout() {
 
   return (
     <MediaContextProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          statusBarBackgroundColor: 'black',
+          presentation: "fullScreenModal",
+          contentStyle: {
+            backgroundColor: "black",
+          }
+        }}
+      >
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+            presentation: "fullScreenModal",
+            statusBarBackgroundColor: 'black',
+          }}
+        />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </MediaContextProvider>
