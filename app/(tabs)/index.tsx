@@ -32,9 +32,9 @@ export default function Home() {
           </Link>
         )}
       />
-      <TouchableOpacity onPress={loadLocalAssets}>
-        <Text className="text-center">Next Page</Text>
-      </TouchableOpacity>
+      {/* <TouchableOpacity onPress={loadLocalAssets}> */}
+      {/*   <Text className="text-center">Next Page</Text> */}
+      {/* </TouchableOpacity> */}
     </>
   );
 }
