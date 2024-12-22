@@ -5,7 +5,7 @@ import { useMedia } from "~/providers/MediaProvider";
 
 export default function AssetPage() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { getAssetById } = useMedia()
+  const { getAssetById, syncToCloud } = useMedia()
   const asset = getAssetById(id)
 
   if (!asset) {
@@ -19,7 +19,7 @@ export default function AssetPage() {
       {/*   headerRight: () => <AntDesign name="cloudupload" size={24} color="black" /> */}
       {/* }} */}
       {/* /> */}
-      <TouchableOpacity className="z-50 absolute top-3 right-4">
+      <TouchableOpacity onPress={() => syncToCloud(asset)} className="z-50 absolute top-3 right-4">
         <AntDesign name="cloudupload" size={24} color="white" />
       </TouchableOpacity>
       <Image

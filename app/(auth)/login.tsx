@@ -66,7 +66,7 @@ export default function Auth() {
       <TouchableOpacity
         disabled={loading}
         onPress={() => signInWithEmail()}
-        className='bg-orange-600 p-4 border border-white'
+        className='bg-orange-600 p-4 rounded-2xl'
       >
         <Text className='text-white text-lg bg-orange-600 text-center'>
           Sign In
@@ -76,9 +76,9 @@ export default function Auth() {
       <TouchableOpacity
         disabled={loading}
         onPress={() => signUpWithEmail()}
-        className='bg-white border border-white p-4'
+        className='bg-orange-600 p-4 rounded-2xl'
       >
-        <Text className='text-white text-lg text-center'>
+        <Text className='text-white text-lg bg-orange-600 text-center'>
           Register
         </Text>
       </TouchableOpacity>

@@ -1,16 +1,23 @@
 import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system"
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import { decode } from "base64-arraybuffer";
+import { supabase } from "~/utils/supabase";
+import { useAuth } from "./AuthProvider";
+import mime from "mime";
 
 type MediaContextType = {
   assets: MediaLibrary.Asset[],
   loadLocalAssets: () => void,
   getAssetById: (id: string) => MediaLibrary.Asset | undefined
+  syncToCloud: (asset: MediaLibrary.Asset) => void
 }
 
 const MediaContext = createContext<MediaContextType>({
   assets: [],
   loadLocalAssets: () => { },
   getAssetById: () => undefined,
+  syncToCloud: () => { }
 })
 
 export function MediaContextProvider({ children }: PropsWithChildren) {
@@ -20,6 +27,7 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [endCursor, setEndCursor] = useState<string>();
   const [loading, setLoading] = useState(false)
+  const { user } = useAuth()
 
   useEffect(() => {
     if (permissionResponse?.status !== 'granted') {
@@ -50,8 +58,32 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
     return localAssets.find((asset) => asset.id === id);
   }
 
+  const syncToCloud = async (asset: MediaLibrary.Asset) => {
+    const info = await MediaLibrary.getAssetInfoAsync(asset)
+
+    if (!info.localUri || !user) return
+
+    const base64string = await FileSystem.readAsStringAsync(
+      info.localUri,
+      { encoding: 'base64' }
+    )
+    const arrayBuffer = decode(base64string)
+
+    const { data, error } = await supabase.storage
+      .from('assets')
+      .upload(`${user?.id}/${asset.filename}`, arrayBuffer, {
+        contentType: mime.getType(asset.filename) ?? "image/jpg",
+        upsert: true, //replace existing url
+      })
+  }
+
   return (
-    <MediaContext.Provider value={{ assets: localAssets, loadLocalAssets, getAssetById }}>
+    <MediaContext.Provider value={{
+      assets: localAssets,
+      loadLocalAssets,
+      getAssetById,
+      syncToCloud
+    }}>
       {children}
     </MediaContext.Provider>
   )

@@ -1,4 +1,4 @@
-import { Link, Stack } from 'expo-router';
+import { Link } from 'expo-router';
 import { FlatList, Image, Text, TouchableOpacity } from 'react-native';
 import { useMedia } from '~/providers/MediaProvider';
 
