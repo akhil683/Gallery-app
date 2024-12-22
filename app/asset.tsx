@@ -1,7 +1,8 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useMedia } from "~/providers/MediaProvider";
+import { getImagekitUrlFromPath } from "~/utils/imagekit";
 
 export default function AssetPage() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -11,6 +12,7 @@ export default function AssetPage() {
   if (!asset) {
     return <Text>Media Not Found</Text>
   }
+  const uri = getImagekitUrlFromPath()
 
   return (
     <View className="bg-black">

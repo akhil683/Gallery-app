@@ -69,12 +69,23 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
     )
     const arrayBuffer = decode(base64string)
 
-    const { data, error } = await supabase.storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from('assets')
       .upload(`${user?.id}/${asset.filename}`, arrayBuffer, {
         contentType: mime.getType(asset.filename) ?? "image/jpg",
         upsert: true, //replace existing url
       })
+    console.log(uploadData, uploadError)
+    if (uploadData) {
+      const { data, error } = await supabase.from('assets').upsert({
+        id: asset.id,
+        path: uploadData?.path,
+        user_id: user.id,
+        object_id: uploadData?.id,
+        mediaType: asset.mediaType,
+      })
+      console.log(data, error)
+    }
   }
 
   return (
