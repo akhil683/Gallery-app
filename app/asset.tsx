@@ -12,20 +12,22 @@ export default function AssetPage() {
   if (!asset) {
     return <Text>Media Not Found</Text>
   }
-  const uri = getImagekitUrlFromPath()
+  let uri
+  if (asset.isLocalAsset) {
+    uri = asset.uri
+  } else {
+    uri = getImagekitUrlFromPath(asset.path, [
+      { width: 600, height: 600 }
+    ])
+  }
 
   return (
     <View className="bg-black">
-      {/* <Stack.Screen options={{ */}
-      {/*   title: 'Photo', */}
-      {/*   headerRight: () => <AntDesign name="cloudupload" size={24} color="black" /> */}
-      {/* }} */}
-      {/* /> */}
       <TouchableOpacity onPress={() => syncToCloud(asset)} className="z-50 absolute top-3 right-4">
         <AntDesign name="cloudupload" size={24} color="white" />
       </TouchableOpacity>
       <Image
-        source={{ uri: asset.uri }}
+        source={{ uri }}
         style={{ width: "100%", height: "100%", objectFit: "contain" }}
       />
     </View>

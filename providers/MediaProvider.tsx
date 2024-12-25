@@ -1,3 +1,4 @@
+// eslint-disable
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system"
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
@@ -27,6 +28,18 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [endCursor, setEndCursor] = useState<string>();
   const [loading, setLoading] = useState(false)
+
+  const [remoteAssets, setRemoteAssets] = useState<any[]>([])
+
+  const assets = [
+    ...remoteAssets,
+    ...localAssets.filter(assets => !assets.isBackedUp)
+  ]
+
+  useEffect(() => {
+    loadRemoteAssets()
+  }, [])
+
   const { user } = useAuth()
 
   useEffect(() => {
@@ -40,6 +53,10 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
     }
   }, [permissionResponse]);
 
+  const loadRemoteAssets = async () => {
+    const { data, error } = await supabase.from('assets').select('*')
+    setRemoteAssets(data)
+  }
   const loadLocalAssets = async () => {
     if (loading || !hasNextPage) {
       return;
@@ -47,7 +64,21 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
     setLoading(true);
 
     const assetsPage = await MediaLibrary.getAssetsAsync({ after: endCursor });
-    setLocalAssets((existingItems) => [...existingItems, ...assetsPage.assets]);
+    const newAssets = await Promise.all(assetsPage.assets.map(async (asset) => {
+      //check if asset is already backedup 
+      //check id of the asset in supabase assets collection
+      const { count } = await supabase
+        .from("assets")
+        .select("*", { count: 'exact', head: true })
+        .eq('id', asset.id)
+      return {
+        ...asset,
+        isBackedUp: !!count && count > 0,
+        isLocalAsset: true,
+      }
+    }))
+
+    setLocalAssets((existingItems) => [...existingItems, ...newAssets]);
     setHasNextPage(assetsPage?.hasNextPage);
     setEndCursor(assetsPage?.endCursor);
 
@@ -55,7 +86,7 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
   };
 
   const getAssetById = (id: string) => {
-    return localAssets.find((asset) => asset.id === id);
+    return assets.find((asset) => asset.id === id);
   }
 
   const syncToCloud = async (asset: MediaLibrary.Asset) => {
@@ -84,13 +115,15 @@ export function MediaContextProvider({ children }: PropsWithChildren) {
         object_id: uploadData?.id,
         mediaType: asset.mediaType,
       })
+        .select()
+        .single()
       console.log(data, error)
     }
   }
 
   return (
     <MediaContext.Provider value={{
-      assets: localAssets,
+      assets,
       loadLocalAssets,
       getAssetById,
       syncToCloud
