@@ -40,6 +40,7 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Tab Two',
+          headerShown: false,
           tabBarIcon: ({ color }) => <AntDesign name="home" size={24} color={color} />,
         }}
       />

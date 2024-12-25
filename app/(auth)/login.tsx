@@ -46,13 +46,14 @@ export default function Auth() {
   }
 
   return (
-    <View className='p-5 mt-10 gap-3'>
+    <View className='p-5 flex min-h-screen justify-center items-center gap-3'>
+      <Text className='text-white text-4xl mb-4'>Sign in to Your Account</Text>
       <TextInput
         onChangeText={(text) => setEmail(text)}
         value={email}
         placeholder="email@address.com"
         autoCapitalize={'none'}
-        className='border text-lg border-gray-600 p-4 rounded-2xl placeholder:text-gray-600 placeholder:bg-gray-200'
+        className='border w-full text-lg border-gray-600 p-4 rounded-2xl placeholder:text-gray-600 placeholder:bg-gray-200'
       />
       <TextInput
         onChangeText={(text) => setPassword(text)}
@@ -60,13 +61,13 @@ export default function Auth() {
         secureTextEntry
         placeholder="Password"
         autoCapitalize='none'
-        className='border text-lg border-gray-600 p-4 rounded-2xl placeholder:text-gray-600 placeholder:bg-gray-200'
+        className='border w-full text-lg border-gray-600 p-4 rounded-2xl placeholder:text-gray-600 placeholder:bg-gray-200'
       />
 
       <TouchableOpacity
         disabled={loading}
         onPress={() => signInWithEmail()}
-        className='bg-orange-600 p-4 rounded-2xl'
+        className='bg-orange-600 w-full p-4 rounded-2xl'
       >
         <Text className='text-white text-lg bg-orange-600 text-center'>
           Sign In
@@ -76,7 +77,7 @@ export default function Auth() {
       <TouchableOpacity
         disabled={loading}
         onPress={() => signUpWithEmail()}
-        className='bg-orange-600 p-4 rounded-2xl'
+        className='bg-orange-600 p-4 w-full rounded-2xl'
       >
         <Text className='text-white text-lg bg-orange-600 text-center'>
           Register
